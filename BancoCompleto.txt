@@ -1,0 +1,457 @@
+CREATE DATABASE TrabalhoPW;
+USE TrabalhoPW;
+
+CREATE TABLE cliente (
+    cdCliente INT PRIMARY KEY AUTO_INCREMENT,
+    CPFCliente VARCHAR(15) NOT NULL UNIQUE,
+    nomeCliente VARCHAR(30) NOT NULL,
+    telefoneCliente CHAR(16) NOT NULL,
+    emailCliente VARCHAR(30) NOT NULL,
+    logradouroCliente VARCHAR(30),
+    bairroCliente VARCHAR(30),
+    cidadeCliente VARCHAR(30),
+    estadoCliente CHAR(2),
+    CEPCliente CHAR(10),
+    dataNascimento DATE NOT NULL
+);
+
+CREATE TABLE veiculo (
+    cdVeiculo INT PRIMARY KEY AUTO_INCREMENT,
+    modelo VARCHAR(30) NOT NULL,
+    marca VARCHAR(30) NOT NULL,
+    ano INT NOT NULL,
+    placa CHAR(7) NOT NULL UNIQUE,
+    quilometragem FLOAT NOT NULL,
+    Status ENUM('disponivel', 'alugado', 'manutencao') NOT NULL
+);
+
+
+
+
+CREATE TABLE tarifa (
+    cdTarifa INT PRIMARY KEY AUTO_INCREMENT,
+    tipoTarifa ENUM('economico', 'medio', 'luxo') NOT NULL, 
+    valor FLOAT NOT NULL
+);
+
+
+select * from tarifa;
+
+CREATE TABLE locacao (
+    cdLocacao INT PRIMARY KEY AUTO_INCREMENT,
+    cdCliente INT NOT NULL,
+    cdVeiculo INT NOT NULL,
+    cdTarifa INT NOT NULL,
+    dataInicio DATE NOT NULL,
+    dataFim DATE,
+    valorTotal FLOAT NOT NULL,
+    quilometragemInicial FLOAT,
+    quilometragemFinal FLOAT,
+    observacoes TEXT,
+    FOREIGN KEY (cdCliente) REFERENCES cliente(cdCliente),
+    FOREIGN KEY (cdVeiculo) REFERENCES veiculo(cdVeiculo),
+    FOREIGN KEY (cdTarifa) REFERENCES tarifa(cdTarifa)
+);
+select * from locacao;
+CREATE TABLE pagamento (
+    cdPagamento INT PRIMARY KEY AUTO_INCREMENT,
+    cdCliente INT NOT NULL,
+    cdLocacao INT NOT NULL,
+    formaPagamento ENUM('dinheiro', 'cartao', 'transferencia') NOT NULL, 
+    dataPagamento DATE,
+    valor FLOAT NOT NULL,
+    FOREIGN KEY (cdCliente) REFERENCES cliente(cdCliente),
+    FOREIGN KEY (cdLocacao) REFERENCES locacao(cdLocacao)
+);
+
+
+
+
+CREATE TABLE seguro (
+    cdSeguro INT PRIMARY KEY AUTO_INCREMENT,
+    cdLocacao INT NOT NULL,
+    tipoSeguro ENUM('basico', 'completo') NOT NULL, 
+    valor FLOAT NOT NULL,
+    FOREIGN KEY (cdLocacao) REFERENCES locacao(cdLocacao)
+);
+
+CREATE TABLE opcional (
+    cdOpcional INT PRIMARY KEY AUTO_INCREMENT,
+    nomeOpcional VARCHAR(30) NOT NULL,
+    valor FLOAT NOT NULL
+);
+
+CREATE TABLE locacao_opcional (
+    cdLocacao INT NOT NULL,
+    cdOpcional INT NOT NULL,
+    PRIMARY KEY (cdLocacao, cdOpcional),
+    FOREIGN KEY (cdLocacao) REFERENCES locacao(cdLocacao),
+    FOREIGN KEY (cdOpcional) REFERENCES opcional(cdOpcional)
+);
+
+-- Inserts
+
+INSERT INTO cliente (CPFCliente, nomeCliente, telefoneCliente, emailCliente, logradouroCliente, bairroCliente, cidadeCliente, estadoCliente, CEPCliente, dataNascimento)
+VALUES 
+('987.654.321-00', 'João Silva', '(11) 93456-7890', 'joao@gmail.com', 'Avenida das Palmeiras', 'Vila Nova', 'Londrina', 'PR', '12345-678', '1985-06-15'),
+('876.543.210-11', 'Maria Oliveira', '(11) 87654-3299', 'maria@gmail.com', 'Rua do Comércio', 'Jardim das Flores', 'Uberlândia', 'MG', '23456-789', '1990-07-20'),
+('765.432.109-22', 'Carlos Souza', '(11) 76543-2188', 'carlos@gmail.com', 'Alameda das Rosas', 'Parque Industrial', 'Sorocaba', 'SP', '34567-890', '1980-03-25'),
+('654.321.098-33', 'Ana Costa', '(11) 65432-1077', 'ana@gmail.com', 'Travessa São João', 'Alto da Serra', 'Caxias do Sul', 'RS', '45678-901', '1992-12-30'),
+('543.210.987-44', 'Pedro Lima', '(11) 54321-0966', 'pedro@gmail.com', 'Estrada dos Bandeirantes', 'Residencial Primavera', 'Maceió', 'AL', '56789-012', '1978-09-10');
+
+select * from cliente;
+
+
+INSERT INTO veiculo (modelo, marca, ano, placa, quilometragem, Status)
+VALUES 
+-- Categoria Luxo
+('BMW X5', 'BMW', 2022, 'AAA1111', 15000.0, 'alugado'),
+('Mercedes-Benz C300', 'Mercedes-Benz', 2021, 'BBB2222', 12000.0, 'alugado'),
+
+-- Categoria Médio
+('Toyota Corolla', 'Toyota', 2019, 'CCC3333', 40000.0, 'alugado'),
+('Honda Civic', 'Honda', 2020, 'DDD4444', 35000.0, 'alugado'),
+
+-- Categoria Econômico
+('Fiat Uno', 'Fiat', 2017, 'EEE5555', 80000.0, 'alugado'),
+('Volkswagen Gol', 'Volkswagen', 2016, 'FFF6666', 70000.0, 'alugado');
+
+
+select * from veiculo;
+
+
+INSERT INTO tarifa (tipoTarifa, valor)
+VALUES 
+('luxo', 300.0),
+('luxo', 300.0),
+('medio', 150.0),
+('medio', 150.0),
+('economico', 50.0);
+
+
+
+
+INSERT INTO locacao (cdCliente, cdVeiculo, cdTarifa, dataInicio, dataFim, valorTotal, quilometragemInicial, quilometragemFinal, observacoes)
+VALUES 
+(1, 1, 1, '2024-11-01', '2024-11-01', 0, 120000.0, 120000.0, 'Locação ativa'),
+(2, 2, 2, '2024-11-03', '2024-11-03', 0, 25000.0, 25000.0, 'Locação ativa'),
+(3, 3, 3, '2024-11-02', '2024-11-02', 0, 50000.0, 50000.0, 'Locação ativa'),
+(4, 4, 4, '2024-11-05', '2024-11-05', 0, 150000.0, 150000.0, 'Locação ativa'),
+(5, 5, 5, '2025-02-15', '2025-02-15', 0, 100000.0, 100000.0, 'Locação ativa');
+
+
+select * from locacao;
+
+insert into pagamento(cdCliente, cdLocacao, formaPagamento, dataPagamento, valor)  values
+(1,1,'cartao','2024-11-01',6000),
+(2,2,'cartao','2024-11-03',6000),
+(3,3,'cartao','2024-11-02',3000),
+(4,4,'cartao','2024-11-05',3000),
+(5,5,'cartao','2025-02-15',1000);
+
+select * from pagamento;
+
+
+INSERT INTO seguro (cdLocacao, tipoSeguro, valor)
+VALUES 
+(1, 'basico', 50.0),
+(2, 'completo', 100.0),
+(3, 'basico', 50.0),
+(4, 'completo', 100.0),
+(5, 'basico', 50.0);
+
+
+
+select * from seguro;
+INSERT INTO opcional (nomeOpcional, valor)
+VALUES 
+('GPS', 10.0),
+('cadeirinha', 20.0),
+('ar-condicionado', 15.0),
+('aluguel de bike', 25.0),
+('assento extra', 30.0);
+select * from opcional;
+INSERT INTO locacao_opcional (cdLocacao, cdOpcional)
+VALUES 
+(1, 1),
+(2, 2),
+(3, 3),
+(4, 4),
+(5, 5);
+select * from locacao_opcional;
+
+
+
+-- View para locações ativas
+CREATE VIEW ClientesComLocacaoAtiva AS
+SELECT c.cdCliente, c.nomeCliente, c.telefoneCliente, c.emailCliente, l.cdLocacao, l.dataInicio,l.quilometragemInicial
+FROM cliente c
+JOIN locacao l ON c.cdCliente = l.cdCliente
+WHERE l.dataFim IS NULL OR l.dataFim > CURDATE() OR l.datafim =l.dataInicio;
+
+
+select * from  ClientesComLocacaoAtiva;
+
+
+select * from locacao;
+
+
+-- Alugar
+-- trigger  par atualizar status do veiculo quando o carro é alugado
+DELIMITER $$
+
+CREATE TRIGGER atualizar_status_veiculo_alugado
+AFTER INSERT ON locacao
+FOR EACH ROW
+BEGIN
+    -- Atualiza o status do veículo para 'alugado' ao inserir uma nova locação
+    UPDATE veiculo
+    SET status = 'alugado'
+    WHERE cdVeiculo = NEW.cdVeiculo;
+END$$
+
+DELIMITER ;
+
+
+
+
+-- devolução
+-- trigger  par atualizar status do veiculo quando o carro é devolvido 
+DELIMITER $$
+
+CREATE TRIGGER atualizar_status_veiculo_devolvido
+AFTER UPDATE ON locacao
+FOR EACH ROW
+BEGIN
+
+
+
+    -- Verifica se a coluna 'dataFIm' e 'quilometragemFInal' foram alteradas
+   IF NEW.dataFim IS NOT NULL AND NEW.quilometragemFinal IS NOT NULL THEN
+
+-- Atualiza o status do veículo para 'disponível'
+        UPDATE veiculo
+        SET status = 'disponível'
+        WHERE cdVeiculo = NEW.cdVeiculo;
+    END IF;
+
+    -- Verifica se dataFim ou valorTotal são NULL e altera a observacoes para 'Locação ativa'
+    IF NEW.dataFim IS NULL OR NEW.valorTotal IS NULL THEN
+        UPDATE locacao
+        SET observacoes = 'Locação ativa'
+        WHERE cdLocacao = NEW.cdLocacao;
+    END IF;
+END$$
+
+DELIMITER ;
+
+
+-- devolução
+-- trigger  atualizar km do carro
+DELIMITER //
+ 
+
+
+CREATE TRIGGER AtualizarQuilometragemVeiculo
+AFTER UPDATE ON locacao
+FOR EACH ROW
+BEGIN
+    -- Atualiza a quilometragem do veículo com o novo valor de quilometragemFinal
+    IF NEW.quilometragemFinal IS NOT NULL THEN
+        UPDATE veiculo
+        SET quilometragem = NEW.quilometragemFinal
+        WHERE cdVeiculo = NEW.cdVeiculo;
+    END IF;
+END //
+
+DELIMITER ;
+
+
+
+
+select * from veiculo;
+
+
+
+
+
+
+-- calcular valor total
+DELIMITER //
+
+CREATE PROCEDURE CalcularValorTotalLocacao(
+    IN codigoLocacao INT,
+    IN kmFinal FLOAT,
+    IN formaPagamento VARCHAR(50)  -- Novo parâmetro para a forma de pagamento
+)
+BEGIN
+    DECLARE valorDiario FLOAT;
+    DECLARE kmInicial FLOAT;
+    DECLARE valorTotal FLOAT;
+    DECLARE dataInicial DATE;
+    DECLARE dataFinal DATE;
+    DECLARE dataDIF INT;
+    DECLARE kmAdicional FLOAT;
+    DECLARE ValorPorKM INT DEFAULT 1;
+    DECLARE valorSeguro FLOAT DEFAULT 0;
+    DECLARE valorOpcionais FLOAT DEFAULT 0;
+    DECLARE cdCliente INT;  -- Variável para armazenar o cdCliente
+    
+    -- Obter dados necessários da locação
+    SELECT t.valor, l.quilometragemInicial, l.dataInicio, CURDATE(), l.cdCliente
+    INTO valorDiario, kmInicial, dataInicial, dataFinal, cdCliente
+    FROM locacao l
+    JOIN tarifa t ON l.cdTarifa = t.cdTarifa
+    WHERE l.cdLocacao = codigoLocacao
+    LIMIT 1;
+
+    -- Obter o valor do seguro, caso exista
+    SELECT IFNULL(SUM(s.valor), 0) INTO valorSeguro
+    FROM seguro s
+    WHERE s.cdLocacao = codigoLocacao;
+
+    -- Obter o valor total dos opcionais, caso existam
+    SELECT IFNULL(SUM(o.valor), 0) INTO valorOpcionais
+    FROM opcional o
+    JOIN locacao_opcional lo ON o.cdOpcional = lo.cdOpcional
+    WHERE lo.cdLocacao = codigoLocacao;
+
+    -- Calcular a diferença de dias entre dataFinal e dataInicial
+    SET dataDIF = DATEDIFF(dataFinal, dataInicial);
+
+    -- Calcular a quilometragem adicional
+    SET kmAdicional = GREATEST(kmFinal - kmInicial, 0);
+
+    -- Calcular o valor total da locação
+    SET valorTotal = (valorDiario * dataDIF) + kmAdicional + valorSeguro + valorOpcionais;
+
+    -- Atualizar a tabela locacao com o valor total e quilometragem final e dataFIm
+    UPDATE locacao
+    SET  dataFim=dataFinal, valorTotal = valorTotal, quilometragemFinal = kmFinal
+    WHERE cdLocacao = codigoLocacao;
+
+    -- Atualizar o campo observacoes para "Locação finalizada" caso dataFim e valorTotal sejam diferentes de nulo
+    IF dataFinal IS NOT NULL AND valorTotal IS NOT NULL THEN
+        UPDATE locacao
+        SET observacoes = 'Locação finalizada'
+        WHERE cdLocacao = codigoLocacao;
+    END IF;
+
+    -- Inserir ou atualizar os dados de forma de pagamento e cliente na tabela pagamento
+    -- Verificar se já existe um pagamento para essa locação e cliente
+    IF EXISTS (SELECT 1 FROM pagamento WHERE cdLocacao = codigoLocacao AND cdCliente = cdCliente) THEN
+	
+      -- faz um INSERT
+        INSERT INTO pagamento (cdCliente, cdLocacao, formaPagamento, dataPagamento, valor)
+        VALUES (cdCliente, codigoLocacao, formaPagamento, CURDATE(), valorTotal);  -- Definindo dataPagamento como a data de hoje
+    END IF;
+
+    -- Exibir os resultados
+    SELECT 
+        codigoLocacao AS 'Código Locação',
+        valorDiario AS 'Valor Diário',
+        kmInicial AS 'Km Inicial',
+        kmFinal AS 'Km Final',
+        kmAdicional AS 'Km Adicional',
+        ValorPorKM AS 'Valor por km',
+        dataInicial AS 'Data Início',
+        dataFinal AS 'Data Fim',
+        dataDIF AS 'Dias de Locação',
+        valorSeguro AS 'Valor Seguro',
+        valorOpcionais AS 'Valor Opcionais',
+        valorTotal AS 'Valor Total Calculado',
+        formaPagamento AS 'Forma pagamento';
+
+END //
+
+DELIMITER ;
+
+select * from pagamento;
+
+-- Chamando procedure
+
+CALL CalcularValorTotalLocacao(1, 120060, 'cartao');
+-- opçoes pagamento ('dinheiro', 'cartao', 'transferencia')
+
+
+ 
+select * from veiculo;
+
+select * from locacao;
+
+
+select * from pagamento;
+
+
+
+
+
+-- para criar locação
+DELIMITER //
+
+CREATE PROCEDURE CriarLocacao(
+    IN codigoCliente INT,
+    IN codigoVeiculo INT,
+    IN codigoTarifa INT,
+    IN KMInicial FLOAT,
+    IN formaDoPagamento VARCHAR(50)
+
+)
+BEGIN
+    DECLARE novaLocacaoID INT;
+    DECLARE valorDiario FLOAT;
+    declare observacao varchar(50);
+    
+    -- Obter o valor da tarifa
+    SELECT valor INTO valorDiario
+    FROM tarifa
+    WHERE cdTarifa = codigoTarifa
+    LIMIT 1;
+
+SET observacao = 'Locação Ativa';
+
+    -- Inserir nova locação
+    INSERT INTO locacao (cdCliente,cdVeiculo,cdTarifa , dataInicio, dataFim, valorTotal,quilometragemInicial,quilometragemFinal , observacoes)
+    VALUES (codigoCliente,codigoVeiculo, codigoTarifa,  CURDATE(), CURDATE(),0, KMInicial,KMInicial ,observacao );
+
+    -- Obter o ID da locação recém-criada
+    SET novaLocacaoID = LAST_INSERT_ID();
+
+    -- Inserir pagamento inicial
+    INSERT INTO pagamento (cdCliente, cdLocacao, formaPagamento, dataPagamento, valor)
+    VALUES (codigoCliente, novaLocacaoID, formaDoPagamento, CURDATE(), valorDiario*20);
+    
+    
+    
+       
+    
+
+    -- Retornar informações da locação criada
+    SELECT 
+        novaLocacaoID AS 'Código Locação',
+        codigoCLiente AS 'Código Cliente',
+        codigoTarifa AS 'Código Tarifa',
+        valorDiario AS 'Valor Diário',
+        KMInicial AS 'Quilometragem Inicial',
+        CURDATE() AS 'Data Início',
+        observacao AS 'Status Locação',
+        valorDiario*20 AS 'Valor Inicial Pago';
+    
+
+END //
+
+DELIMITER ;
+
+select * from cliente;
+
+CALL CriarLocacao(1, 1, 1, 120060, 'cartao');
+-- opçoes pagamento ('dinheiro', 'cartao', 'transferencia')
+
+
+
+select * from veiculo; 
+select * from tarifa;
+
+select *  from pagamento;
+select * from seguro;
+select * from locacao;
