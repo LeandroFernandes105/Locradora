@@ -1,6 +1,6 @@
 # 🎬 Locadora - Sistema de Gerenciamento de Locações
 
-Este projeto foi desenvolvido como parte da disciplina de **Banco de Dados 2** do curso de **Bacharelado em Sistemas de Informação** no **Instituto Federal**.  
+Este projeto foi desenvolvido como parte da disciplina de **Banco de Dados 2** do curso de **Bacharelado em Sistemas de Informação** no **Instituto Federal de são paulo (IFSP)**.  
 O sistema simula uma **locadora de veículos**, permitindo o gerenciamento de **clientes**, **veículos**, **seguros**, **tarifas** e **locações**.
 
 👥 Realizado por:  
