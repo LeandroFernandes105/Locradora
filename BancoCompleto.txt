@@ -1,5 +1,5 @@
-CREATE DATABASE TrabalhoPW;
-USE TrabalhoPW;
+CREATE DATABASE TrabalhoBD;
+USE TrabalhoBD;
 
 CREATE TABLE cliente (
     cdCliente INT PRIMARY KEY AUTO_INCREMENT,
